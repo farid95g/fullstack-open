@@ -1,0 +1,16 @@
+You can see the result be running below code in address 'https://www.websequencediagrams.com/':
+
+title 0.6: New note
+
+note over browser:
+from javascript code, the HTTP POST
+request is made to add a new note
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server->browser: JSON response
+
+note over browser:
+browser does reload the page,
+but new note is added
+end note
