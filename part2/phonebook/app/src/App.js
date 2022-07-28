@@ -3,6 +3,7 @@ import axios from 'axios'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState() 
@@ -11,9 +12,9 @@ const App = () => {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => setPersons(response.data))
+    personService
+      .getAll()
+      .then(persons => setPersons(persons))
   }, [])
 
   const handleNameChange = (e) => {
@@ -28,18 +29,47 @@ const App = () => {
     setSearch(e.target.value)
   }
 
+  const update = (person) => {
+    personService
+      .update(person)
+      .then(updatedPerson => setPersons(persons.map(p => p.name === updatedPerson.name ? updatedPerson : p)))
+  }
+
   const onSubmit = (e) => {
     e.preventDefault()
-    if (persons.find(p => p.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+    const existingUser = persons.find(p => p.name === newName)
+    if (existingUser) {
+      const confirm = window.confirm(`${existingUser.name} is already added to phonebook, replace the old number with a new one?`)
+
+      if (confirm) {
+        update({ ...existingUser, number: newNumber })
+      } else {
+        return
+      }
     } else {
-      setPersons([
-        ...persons,
-        { name: newName, number: newNumber, id: persons.length + 1 }
-      ])
+      const newPerson = { name: newName, number: newNumber }
+      personService
+        .create(newPerson)
+        .then(returnedPerson => {
+          setPersons([
+            ...persons,
+            returnedPerson
+          ])
+        })
     }
     setNewName('')
     setNewNumber('')
+  }
+
+  const remove = id => {
+    const selectedPerson = persons.find(p => p.id === id)
+    const confirm = window.confirm(`Delete ${selectedPerson.name}?`)
+
+    if (confirm) {
+      personService
+        .remove(id)
+        .then(() => setPersons(persons.filter(p => p.id !== id)))
+    }
   }
 
   return (
@@ -58,7 +88,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={persons} search={search} />
+      <Persons persons={persons} search={search} remove={remove} />
     </div>
   )
 }
