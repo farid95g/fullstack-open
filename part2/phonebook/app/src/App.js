@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import personService from './services/persons'
+import  Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState() 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -33,6 +34,15 @@ const App = () => {
     personService
       .update(person)
       .then(updatedPerson => setPersons(persons.map(p => p.name === updatedPerson.name ? updatedPerson : p)))
+      .catch(error => {
+        setNotificationMessage({
+          status: 'error',
+          message: `Information of ${person.name} has already been removed from server`
+        })
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000);
+      })
   }
 
   const onSubmit = (e) => {
@@ -43,6 +53,10 @@ const App = () => {
 
       if (confirm) {
         update({ ...existingUser, number: newNumber })
+        setNotificationMessage({
+          status: 'success',
+          message: `${existingUser.name}'s phone number updated successfully`
+        })
       } else {
         return
       }
@@ -56,9 +70,16 @@ const App = () => {
             returnedPerson
           ])
         })
+        setNotificationMessage({
+          status: 'success',
+          message: `${newPerson.name} was added successfully`
+        })
     }
     setNewName('')
     setNewNumber('')
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, 5000);
   }
 
   const remove = id => {
@@ -75,6 +96,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification info={notificationMessage} />
 
       <Filter search={search} handleSearchChange={handleSearchChange} />
 
