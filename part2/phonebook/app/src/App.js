@@ -3,10 +3,10 @@ import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import personService from './services/persons'
-import  Notification from './components/Notification'
+import Notification from './components/Notification'
 
 const App = () => {
-  const [persons, setPersons] = useState() 
+  const [persons, setPersons] = useState()
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
@@ -21,60 +21,79 @@ const App = () => {
   const handleNameChange = (e) => {
     setNewName(e.target.value)
   }
-  
+
   const handleNumberChange = (e) => {
     setNewNumber(e.target.value)
   }
-  
+
   const handleSearchChange = (e) => {
     setSearch(e.target.value)
   }
 
-  const update = (person) => {
-    personService
-      .update(person)
-      .then(updatedPerson => setPersons(persons.map(p => p.name === updatedPerson.name ? updatedPerson : p)))
-      .catch(error => {
-        setNotificationMessage({
-          status: 'error',
-          message: `Information of ${person.name} has already been removed from server`
-        })
-        setTimeout(() => {
-          setNotificationMessage(null)
-        }, 5000);
-      })
-  }
-
   const onSubmit = (e) => {
     e.preventDefault()
-    const existingUser = persons.find(p => p.name === newName)
-    if (existingUser) {
-      const confirm = window.confirm(`${existingUser.name} is already added to phonebook, replace the old number with a new one?`)
 
-      if (confirm) {
-        update({ ...existingUser, number: newNumber })
+    const newPerson = { name: newName, number: newNumber }
+    personService
+      .create(newPerson)
+      .then(returnedPerson => {
+        setPersons([
+          ...persons,
+          returnedPerson
+        ])
+        // const personExists = persons.find(p => p.id === returnedPerson.id)
+
+        // if (!personExists) {
+        //   setPersons([
+        //     ...persons,
+        //     returnedPerson
+        //   ])
+        //   return
+        // }
+
+        // setPersons(persons.map(person => {
+        //   if (person.id === returnedPerson.id) return returnedPerson
+          
+        //   return person
+        // }))
+
         setNotificationMessage({
           status: 'success',
-          message: `${existingUser.name}'s phone number updated successfully`
+          message: `${newPerson.name} was added successfully`,
+          // message: `${newPerson.name} was ${existingUser ? 'updated' : 'added'} successfully`,
         })
-      } else {
-        return
-      }
-    } else {
-      const newPerson = { name: newName, number: newNumber }
-      personService
-        .create(newPerson)
-        .then(returnedPerson => {
-          setPersons([
-            ...persons,
-            returnedPerson
-          ])
-        })
-        setNotificationMessage({
-          status: 'success',
-          message: `${newPerson.name} was added successfully`
-        })
-    }
+      })
+      .catch(async (err) => {
+        if (err.response.status === 422) {
+          const confirm = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      
+          if (!confirm) return
+
+          const foundedPerson = await personService.getPerson(newPerson.name)
+          personService
+            .update(foundedPerson.id, newPerson)
+            .then(updatedPerson => {
+              console.log(updatedPerson)
+              setPersons(persons.map(person => {
+                if (person.id === updatedPerson.id) return updatedPerson
+                
+                return person
+              }))
+            })
+            .catch(err => {
+              setNotificationMessage({
+                status: 'error',
+                message: err.response.data.error
+              })
+            })
+        } else {
+          setNotificationMessage({
+            status: 'error',
+            message: err.response.data.error
+          })
+        }
+      })
+
     setNewName('')
     setNewNumber('')
     setTimeout(() => {

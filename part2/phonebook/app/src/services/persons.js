@@ -6,16 +6,20 @@ const getAll = () => axios
     .get(baseURL)
     .then(response => response.data)
 
-const create = (person) => axios
-    .post(baseURL, person)
+const create = (payload) => axios
+    .post(baseURL, payload)
     .then(response => response.data)
 
-const update = (person) => axios
-    .put(`${baseURL}/${person.id}`, person)
+const getPerson = (name) => axios
+    .get(`${baseURL}/${name}`)
+    .then(response => response.data)
+
+const update = (id, payload) => axios
+    .put(`${baseURL}/${id}`, payload)
     .then(response => response.data)
 
 const remove = (id) => axios
     .delete(`${baseURL}/${id}`)
     .then(response => response.data)
 
-export default { getAll, create, update, remove }
+export default { getAll, create, getPerson, update, remove }
