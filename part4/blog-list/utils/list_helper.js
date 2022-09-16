@@ -25,7 +25,7 @@ const favoriteBlog = (blogs, prop) => {
         
 }
 
-const findAuthorWithMostBlogs = (blogs) => {
+const mostBlogs = (blogs) => {
     if (!blogs.length) return {}
 
     const [author, authorBlogs] = _(blogs)
@@ -40,9 +40,21 @@ const findAuthorWithMostBlogs = (blogs) => {
     return { author, blogs: authorBlogs }
 }
 
+const mostLikes = (blogs) => {
+    if (!blogs.length) return {}
+
+    const { author } = _(blogs).maxBy('likes')
+    const likes = _(blogs)
+        .filter(['author', author])
+        .sumBy('likes')
+
+    return { author, likes }
+}
+
 module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
-    findAuthorWithMostBlogs
+    mostBlogs,
+    mostLikes
 }
