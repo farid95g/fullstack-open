@@ -52,6 +52,45 @@ describe('blog post', () => {
         const contents = blogsAtEnd.map(blog => blog.title)
         expect(contents).toContain('Testing APIs')
     })
+
+    test('has 0 likes by default', async () => {
+        const newBlogPostWithoutLikes = {
+            title: 'Testing to add blog without likes',
+            author: 'Stephen Hawking',
+            url: 'https://www.facebook.com'
+        }
+
+        const savedBlogPost = await api
+            .post('/api/blogs')
+            .send(newBlogPostWithoutLikes)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        expect(savedBlogPost.body.likes).toBe(0)
+    })
+
+    test('without title and url cannot be created', async () => {
+        const newBlogPostWithoutTitle = {
+            author: 'Stephen Hawking',
+            url: 'https://www.facebook.com'
+        }
+        const newBlogPostWithoutUrl = {
+            title: 'New blog post without url',
+            author: 'Stephen Hawking'
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlogPostWithoutTitle)
+            .expect(400)
+        await api
+            .post('/api/blogs')
+            .send(newBlogPostWithoutUrl)
+            .expect(400)
+
+        const dbBlogPosts = await testHelper.blogsInDb()
+        expect(dbBlogPosts).toHaveLength(initialBlogs.length)
+    })
 })
 
 afterAll(() => {
