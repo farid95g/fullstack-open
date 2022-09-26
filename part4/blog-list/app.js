@@ -6,8 +6,8 @@ const blogsRoutes = require('./routes/blogs')
 
 const app = express()
 
-const connectionString = config.CONNECTION_STRING
-mongoose.connect(connectionString)
+const dbUri = config.DB_URI
+mongoose.connect(dbUri)
 
 app.use(cors())
 app.use(express.json())

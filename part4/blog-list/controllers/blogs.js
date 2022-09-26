@@ -1,11 +1,8 @@
 const Blog = require('../models/blog')
 
-const getAllBlogs = (request, response) => {
-    Blog
-        .find({})
-        .then(blogs => {
-            response.json(blogs)
-        })
+const getAllBlogs = async (request, response) => {
+    const blogs = await Blog.find({})
+    response.json(blogs)
 }
 
 const createBlog = (request, response) => {
