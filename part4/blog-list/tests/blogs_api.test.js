@@ -93,6 +93,46 @@ describe('blog post', () => {
     })
 })
 
+describe('deletion of a blog', () => {
+    test('succeeds with status code 204, if id is valid', async () => {
+        const blogsAtStart = await testHelper.blogsInDb()
+        const blogToDelete = blogsAtStart[0]
+
+        await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .expect(204)
+
+        const blogsAtEnd = await testHelper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
+
+        const titles = blogsAtEnd.map(blog => blog.title)
+        expect(titles).not.toContain(blogToDelete.title)
+    })
+})
+
+describe('update of a blog', () => {
+    test('succeeds with an existing id', async () => {
+        const blogsAtStart = await testHelper.blogsInDb()
+        const blogToUpdate = blogsAtStart[0]
+
+        const body = {
+            likes: 3,
+            title: 'React is hard'
+        }
+
+        const updatedBlog = await api
+            .put(`/api/blogs/${blogToUpdate.id}`)
+            .send(body)
+            .expect(200)
+
+        expect(updatedBlog.body.likes).toEqual(3)
+
+        const blogs = await testHelper.blogsInDb()
+        const titles = blogs.map(blog => blog.title)
+        expect(titles).toContain('React is hard')
+    })
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
