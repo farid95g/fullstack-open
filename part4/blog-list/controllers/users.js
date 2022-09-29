@@ -9,10 +9,22 @@ const getAllUsers = async (request, response) => {
 const createUser = async (request, response) => {
     const { username, name, password } = request.body
 
+    if (!username || !password) {
+        return response.status(400).json({
+            message: 'Please, provide username and password!'
+        })
+    }
+
+    if (username.length < 3 || password.length < 3) {
+        return response.status(400).json({
+            message: 'Username and password must have at least 3 characters!'
+        })
+    }
+
     const existingUser = await User.findOne({ username })
     if (existingUser) {
         return response.status(400).json({
-            error: `Username ${username} has been already taken.`
+            message: `Username ${username} has been already taken!`
         })
     }
 

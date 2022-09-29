@@ -13,6 +13,20 @@ const initialBlogs = [
     }
 ]
 
+const initialUsers = [
+    {
+        username: 'farid95g',
+        name: 'Farid Guluzade',
+        password: '12345@As'
+    },
+    {
+        username: 'hawking',
+        name: 'Stephen Hawking',
+        password: '12345@As'
+    }
+]
+
 module.exports = {
-    initialBlogs
+    initialBlogs,
+    initialUsers
 }
