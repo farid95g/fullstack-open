@@ -1,5 +1,14 @@
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+
+const getTokenFrom = request => {
+    const authorization = request.get('authorization')
+    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+        return authorization.substring(7)
+    }
+    return null
+}
 
 const getAllBlogs = async (request, response) => {
     const blogs = await Blog.find({}).populate('user')
@@ -7,6 +16,13 @@ const getAllBlogs = async (request, response) => {
 }
 
 const createBlog = async (request, response) => {
+    const token = getTokenFrom(request)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+
+    if (!decodedToken.id || decodedToken.id !== request.body.user) {
+        return response.status(401).json({ error: 'Missing or invalid token' })
+    }
+
     if (!request.body.title || !request.body.url) {
         return response.status(400)
             .json({ message: 'Please, include title and url for the blog!' })
@@ -16,10 +32,11 @@ const createBlog = async (request, response) => {
         return response.status(401).end()
     }
 
-    const user = await User.findById(request.body.user)
+    const user = await User.findById(decodedToken.id)
     const blog = new Blog({
         ...request.body,
-        likes: request.body.likes ?? 0
+        likes: request.body.likes ?? 0,
+        user: user.id
     })
     
     const savedBlog = await blog.save()
