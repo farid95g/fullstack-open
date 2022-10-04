@@ -2,7 +2,8 @@ POST http://localhost:8080/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Second blog",
-    "author": "Test user",
-    "url": "http://testing.com"
+    "title": "New blog with user 22",
+    "author": "Testing Author 22",
+    "url": "http://testing.com",
+    "user": "63358ab7e201df5c56653401"
 }

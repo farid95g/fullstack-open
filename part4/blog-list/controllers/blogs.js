@@ -1,7 +1,8 @@
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const getAllBlogs = async (request, response) => {
-    const blogs = await Blog.find({})
+    const blogs = await Blog.find({}).populate('user')
     response.json(blogs)
 }
 
@@ -11,11 +12,19 @@ const createBlog = async (request, response) => {
             .json({ message: 'Please, include title and url for the blog!' })
     }
 
+    if (!request.body.user) {
+        return response.status(401).end()
+    }
+
+    const user = await User.findById(request.body.user)
     const blog = new Blog({
         ...request.body,
         likes: request.body.likes ?? 0
     })
+    
     const savedBlog = await blog.save()
+    user.blogs = user.blogs.concat(savedBlog.id)
+    await user.save()
     
     response.status(201).json(savedBlog)
 }
