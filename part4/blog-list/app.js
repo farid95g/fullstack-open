@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const blogsRoutes = require('./routes/blogs')
 const usersRoutes = require('./routes/users')
 const loginRoutes = require('./routes/login')
+const middleware = require('./utils/middleware')
 
 const app = express()
 
@@ -15,6 +16,7 @@ mongoose.connect(dbUri)
 app.use(cors())
 app.use(express.json())
 
+app.use(middleware.tokenExtractor)
 app.use('/api/blogs', blogsRoutes)
 app.use('/api/users', usersRoutes)
 app.use('/api/login', loginRoutes)
