@@ -3,8 +3,8 @@ Content-Type: application/json
 Authorization: bearer 
 
 {
-    "title": "Post 2",
-    "author": "Post 2 by farid95g",
-    "url": "http://post2.com",
+    "title": "Post 7",
+    "author": "Post 7 by hawking",
+    "url": "http://post7.com",
     "user": "63358ab7e201df5c56653401"
 }

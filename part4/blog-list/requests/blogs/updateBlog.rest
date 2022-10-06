@@ -1,5 +1,6 @@
-PUT http://localhost:8080/api/blogs/63318d4450c344a7e94e5440
+PUT http://localhost:8080/api/blogs/633e87b45c85dc029f83b7c7
 Content-Type: application/json
+Authorization: bearer 
 
 {
     "likes": 2
