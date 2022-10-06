@@ -1,10 +1,10 @@
 POST http://localhost:8080/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlkOTVnIiwiaWQiOiI2MzM1OGFiN2UyMDFkZjVjNTY2NTM0MDEiLCJpYXQiOjE2NjQ5NzI4NDZ9.rwjj08e78SI1U2z37kmQ4XolLhF93GBOB9c8LpcWuYQ
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imhhd2tpbmciLCJpZCI6IjYzMzU4YjgyZTIwMWRmNWM1NjY1MzQwNSIsImlhdCI6MTY2NTA0MjI4MX0.6_XsolRcXemIGlcl5UyvsGWP6Rv7l7zphj2wo7URU_g
 
 {
-    "title": "Post after middleware",
-    "author": "Token inside middleware",
-    "url": "http://token.com",
-    "user": "63358ab7e201df5c56653401"
+    "title": "Post 6",
+    "author": "Post 6 by hawking",
+    "url": "http://post6.com",
+    "user": "63358b82e201df5c56653405"
 }

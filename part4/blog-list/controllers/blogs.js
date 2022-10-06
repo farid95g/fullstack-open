@@ -3,7 +3,7 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 
 const getAllBlogs = async (request, response) => {
-    const blogs = await Blog.find({}).populate('user')
+    const blogs = await Blog.find({}).populate('user', { blogs: 0 })
     response.json(blogs)
 }
 
@@ -39,7 +39,16 @@ const createBlog = async (request, response) => {
 }
 
 const deleteBlog = async (request, response) => {
-    await Blog.findByIdAndRemove(request.params.id)
+    const blog = await Blog.findById(request.params.id)
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+
+    if (decodedToken.id.toString() !== blog.user.toString()) {
+        return response.status(401).json({
+            message: 'You must be the author to delete the blog!'
+        })
+    }
+
+    await blog.remove()
     response.status(204).end()
 }
 
