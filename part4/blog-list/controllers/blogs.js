@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -8,10 +7,8 @@ const getAllBlogs = async (request, response) => {
 }
 
 const createBlog = async (request, response) => {
-    const token = request.token
-    const decodedToken = jwt.verify(token, process.env.SECRET)
-
-    if (!decodedToken.id || decodedToken.id !== request.body.user) {
+    const creator = request.user
+    if (!creator.id || creator.id !== request.body.user) {
         return response.status(401).json({ error: 'Missing or invalid token' })
     }
 
@@ -24,7 +21,7 @@ const createBlog = async (request, response) => {
         return response.status(401).end()
     }
 
-    const user = await User.findById(decodedToken.id)
+    const user = await User.findById(creator.id)
     const blog = new Blog({
         ...request.body,
         likes: request.body.likes ?? 0,
@@ -40,9 +37,14 @@ const createBlog = async (request, response) => {
 
 const deleteBlog = async (request, response) => {
     const blog = await Blog.findById(request.params.id)
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!blog) {
+        return response.status(404).json({
+            message: `Blog with id ${request.params.id} does not exist!`
+        })
+    }
 
-    if (decodedToken.id.toString() !== blog.user.toString()) {
+    const creator = request.user
+    if (creator.id.toString() !== blog.user.toString()) {
         return response.status(401).json({
             message: 'You must be the author to delete the blog!'
         })
