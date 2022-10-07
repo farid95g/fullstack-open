@@ -12,7 +12,7 @@ const login = async (request, response) => {
 
     if (!(user && passwordCorrect)) {
         return response.status(401).json({
-            error: 'Invalid username or password'
+            message: 'Invalid username or password'
         })
     }
 

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
 const app = require('../app')
 const { initialUsers } = require('./initialTestData')
 const User = require('../models/user')
@@ -10,14 +11,27 @@ const api = supertest(app)
 beforeEach(async () => {
     jest.setTimeout(75000)
 
+    const passwordHash = await bcrypt.hash('12345@As', 10)
+    const initialUsersWithPassword = initialUsers.map(user => ({
+        ...user,
+        passwordHash
+    }))
     await User.deleteMany({})
-    await User.insertMany(initialUsers)
+    await User.insertMany(initialUsersWithPassword)
 })
 
 describe('user', () => {
     test('list returns all users', async () => {
+        const user = { ...initialUsers[0], password: '12345@As' }
+        const loginResponse = await api
+            .post('/api/login')
+            .send(user)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
         const response = await api
             .get('/api/users')
+            .set({ Authorization: `bearer ${loginResponse.body.token}` })
             .expect(200)
 
         expect(response.body).toHaveLength(2)
