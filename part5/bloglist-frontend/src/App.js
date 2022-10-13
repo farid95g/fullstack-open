@@ -3,6 +3,8 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import loginService from './services/login'
+import CreateBlogForm from './components/CreateBlogForm'
+import jwt from 'jwt-decode'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -18,6 +20,7 @@ const App = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       if (Object.keys(user).length) {
+        blogService.assignToken(user.token)
         const userBlogs = await blogService.getAll(user.token)
         setBlogs(userBlogs)
       }
@@ -31,6 +34,7 @@ const App = () => {
       setUser(loggedInUser)
       localStorage.setItem('token', loggedInUser.token)
       localStorage.setItem('user', JSON.stringify(loggedInUser))
+      blogService.assignToken(loggedInUser.token)
     } catch (e) {
       setError(e.response.data.message)
     }
@@ -41,16 +45,23 @@ const App = () => {
     localStorage.clear()
   }
 
+  const createNewBlog = async (newBlog) => {
+    const { id } = jwt(user.token)
+    const savedBlog = await blogService.createNew({ ...newBlog, user: id })
+    setBlogs([...blogs, savedBlog])
+  }
+
   return (
     <div>
       {
         !Object.keys(user).length
           ? <LoginForm login={login} error={error} />
           : <>
-              <h2>blogs</h2>
+              <h2>Blogs</h2>
               <p>
                 {user.name} logged in <button onClick={logout}>logout</button>
-                </p>
+              </p>
+              <CreateBlogForm createNewBlog={createNewBlog} />
               {blogs.map(blog =>
                 <Blog key={blog.id} blog={blog} />
               )}
