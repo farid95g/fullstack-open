@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const LoginForm = ({ login, error }) => {
+const LoginForm = ({ login }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
@@ -12,7 +12,6 @@ const LoginForm = ({ login, error }) => {
     return (
         <div>
             <h1>Log in to application</h1>
-            {error && <span style={{color: 'red'}}>{error}</span>}
             <form onSubmit={submit}>
                 <div>
                     <label>username</label>

@@ -9,7 +9,12 @@ import jwt from 'jwt-decode'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState({})
-  const [error, setError] = useState('')
+  const [notification, setNotification] = useState(null)
+
+  const toggleNotification = notification => {
+    setNotification(notification)
+    setTimeout(() => setNotification(null), 5000)
+  }
 
   useEffect(() => {
     if (localStorage.getItem('user')) {
@@ -36,7 +41,7 @@ const App = () => {
       localStorage.setItem('user', JSON.stringify(loggedInUser))
       blogService.assignToken(loggedInUser.token)
     } catch (e) {
-      setError(e.response.data.message)
+      toggleNotification({ message: e.response.data.message, status: 'error' })
     }
   }
 
@@ -49,23 +54,40 @@ const App = () => {
     const { id } = jwt(user.token)
     const savedBlog = await blogService.createNew({ ...newBlog, user: id })
     setBlogs([...blogs, savedBlog])
+    toggleNotification({ message: `A new blog '${savedBlog.title} ${savedBlog.author}' added.`, status: 'success' })
   }
 
   return (
     <div>
       {
+        notification
+          ? <div
+            className='notification'
+            style={{
+              backgroundColor: 'lightgray',
+              padding: '.5rem 1rem',
+              border: '2px solid',
+              borderColor: notification?.status === 'success' ? 'green' : 'red',
+              color: notification?.status === 'success' ? 'green' : 'red',
+              borderRadius: '5px'
+            }}
+          >
+            <span>{notification?.message}</span>
+          </div> : null
+      }
+      {
         !Object.keys(user).length
-          ? <LoginForm login={login} error={error} />
+          ? <LoginForm login={login} />
           : <>
-              <h2>Blogs</h2>
-              <p>
-                {user.name} logged in <button onClick={logout}>logout</button>
-              </p>
-              <CreateBlogForm createNewBlog={createNewBlog} />
-              {blogs.map(blog =>
-                <Blog key={blog.id} blog={blog} />
-              )}
-            </>
+            <h2>Blogs</h2>
+            <p>
+              {user.name} logged in <button onClick={logout}>logout</button>
+            </p>
+            <CreateBlogForm createNewBlog={createNewBlog} />
+            {blogs.map(blog =>
+              <Blog key={blog.id} blog={blog} />
+            )}
+          </>
       }
     </div>
   )
