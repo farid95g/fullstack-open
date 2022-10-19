@@ -1,15 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import loginService from './services/login'
 import CreateBlogForm from './components/CreateBlogForm'
 import jwt from 'jwt-decode'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState({})
   const [notification, setNotification] = useState(null)
+  const newBlogFormRef = useRef()
 
   const toggleNotification = notification => {
     setNotification(notification)
@@ -51,6 +53,7 @@ const App = () => {
   }
 
   const createNewBlog = async (newBlog) => {
+    newBlogFormRef.current.toggleVisibility()
     const { id } = jwt(user.token)
     const savedBlog = await blogService.createNew({ ...newBlog, user: id })
     setBlogs([...blogs, savedBlog])
@@ -83,7 +86,9 @@ const App = () => {
             <p>
               {user.name} logged in <button onClick={logout}>logout</button>
             </p>
-            <CreateBlogForm createNewBlog={createNewBlog} />
+            <Togglable buttonLabel='New note' ref={newBlogFormRef}>
+              <CreateBlogForm createNewBlog={createNewBlog} />
+            </Togglable>
             {blogs.map(blog =>
               <Blog key={blog.id} blog={blog} />
             )}
