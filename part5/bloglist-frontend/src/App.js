@@ -66,6 +66,7 @@ const App = () => {
       user: blog.user.id,
       likes: blog.likes + 1
     })
+
     setBlogs(blogs.map(b => {
       if (b.id !== blog.id) {
         return b
@@ -73,6 +74,16 @@ const App = () => {
 
       return updatedBlog
     }))
+  }
+
+  const removeBlog = async (blog) => {
+    const confirmed = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
+    if (confirmed) {
+      const status = await blogService.deleteBlog(blog)
+      if (status === 204) {
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+      }
+    }
   }
 
   return (
@@ -104,8 +115,14 @@ const App = () => {
             <Togglable buttonLabel='New note' ref={newBlogFormRef}>
               <CreateBlogForm createNewBlog={createNewBlog} />
             </Togglable>
-            {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
+            {blogs.sort((b1, b2) => b2.likes - b1.likes).map(blog =>
+              <Blog
+                key={blog.id}
+                blog={blog}
+                updateBlog={updateBlog}
+                removeBlog={removeBlog}
+                userId={jwt(user.token)?.id}
+              />
             )}
           </>
       }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({ blog, updateBlog }) => {
+const Blog = ({ blog, updateBlog, removeBlog, userId }) => {
   const [extended, setExtended] = useState(false)
 
   const show = { display: extended ? '' : 'none' }
@@ -28,7 +28,10 @@ const Blog = ({ blog, updateBlog }) => {
         >
           Like
         </button><br />
-        {blog.user.name}
+        {blog.user.name}<br />
+        {
+          userId === blog.user.id && <button onClick={() => removeBlog(blog)}>Remove</button>
+        }
       </div>
     </div>
   )

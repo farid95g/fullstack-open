@@ -22,9 +22,13 @@ const createNew = async (newBlog) => {
 }
 
 const updateBlog = async (updatedBlog) => {
-  console.log(updatedBlog)
   const response = await axios.put(`${baseUrl}/${updatedBlog.id}`, updatedBlog, addConfig())
   return response.data
 }
 
-export default { getAll, createNew, updateBlog, assignToken }
+const deleteBlog = async (blog) => {
+  const response = await axios.delete(`${baseUrl}/${blog.id}`, addConfig())
+  return response.status
+}
+
+export default { getAll, createNew, updateBlog, deleteBlog, assignToken }
