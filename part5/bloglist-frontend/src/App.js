@@ -60,6 +60,21 @@ const App = () => {
     toggleNotification({ message: `A new blog '${savedBlog.title} ${savedBlog.author}' added.`, status: 'success' })
   }
 
+  const updateBlog = async (blog) => {
+    const updatedBlog = await blogService.updateBlog({
+      ...blog,
+      user: blog.user.id,
+      likes: blog.likes + 1
+    })
+    setBlogs(blogs.map(b => {
+      if (b.id !== blog.id) {
+        return b
+      }
+
+      return updatedBlog
+    }))
+  }
+
   return (
     <div>
       {
@@ -90,7 +105,7 @@ const App = () => {
               <CreateBlogForm createNewBlog={createNewBlog} />
             </Togglable>
             {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} />
+              <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
             )}
           </>
       }
