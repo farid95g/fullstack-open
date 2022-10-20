@@ -27,4 +27,6 @@ const Togglable = forwardRef(({ buttonLabel, children }, refs) => {
     )
 })
 
+Togglable.displayName = 'Togglable'
+
 export default Togglable
