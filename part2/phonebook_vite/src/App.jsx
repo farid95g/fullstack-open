@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
+import personService from './services/person'
 
 const App = () => {
     const [persons, setPersons] = useState([])
@@ -11,29 +11,47 @@ const App = () => {
     const [filter, setFilter] = useState('')
 
     useEffect(() => {
-        axios.get('http://localhost:3001/persons').then((response) => {
-            setPersons(response.data)
+        personService.getAll().then((initialPersons) => {
+            setPersons(initialPersons)
         })
     }, [])
 
     const addNewPerson = (event) => {
         event.preventDefault()
-        const foundName = persons.find(
+        const foundPerson = persons.find(
             (person) => person.name.toLowerCase() === newName.toLowerCase()
         )
 
-        if (foundName) {
-            alert(`${newName} is already added to phonebook`)
-            return
+        if (foundPerson) {
+            const updatePerson = confirm(
+                `${foundPerson.name} is already added to phonebook, replace the old number with a new one?`
+            )
+
+            if (!updatePerson) return
+
+            personService
+                .update(foundPerson.id, {
+                    ...foundPerson,
+                    number: newNumber
+                })
+                .then((updatedUser) => {
+                    setPersons(
+                        persons.map((person) =>
+                            person.id !== updatedUser.id ? person : updatedUser
+                        )
+                    )
+                })
+        } else {
+            const newPerson = {
+                name: newName,
+                number: newNumber
+            }
+
+            personService.create(newPerson).then((newPerson) => {
+                setPersons(persons.concat(newPerson))
+            })
         }
 
-        setPersons(
-            persons.concat({
-                name: newName,
-                number: newNumber,
-                id: persons.length + 1
-            })
-        )
         setNewName('')
         setNewNumber('')
     }
@@ -41,6 +59,16 @@ const App = () => {
     const filteredPersons = persons.filter((person) =>
         person.name.toLowerCase().includes(filter.toLowerCase())
     )
+
+    const deletePerson = (person) => {
+        const shouldDelete = confirm(`Delete ${person.name}?`)
+
+        if (!shouldDelete) return
+
+        personService.remove(person.id).then(() => {
+            setPersons(persons.filter((p) => p.id !== person.id))
+        })
+    }
 
     return (
         <div>
@@ -63,7 +91,10 @@ const App = () => {
 
             <h3>Numbers</h3>
 
-            <Persons persons={filteredPersons} />
+            <Persons
+                persons={filteredPersons}
+                deletePerson={deletePerson}
+            />
         </div>
     )
 }
