@@ -10,6 +10,7 @@ function App() {
     const [countries, setCountries] = useState([])
     const [message, setMessage] = useState('')
     const [searchResult, setSearchResult] = useState([])
+    const [weather, setWeather] = useState(null)
 
     useEffect(() => {
         axios
@@ -22,7 +23,6 @@ function App() {
             const filteredCountries = countries?.filter((country) =>
                 country.name.common.toLowerCase().includes(search.toLowerCase())
             )
-            console.log(filteredCountries)
 
             if (filteredCountries.length > 10) {
                 setMessage('Too many matches, specify another filter!')
@@ -39,6 +39,19 @@ function App() {
             setMessage('')
         }
     }, [search])
+
+    useEffect(() => {
+        if (searchResult.length === 1) {
+            const [lat, lon] = searchResult[0].capitalInfo.latlng
+
+            axios
+                .get(`https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${lat}&lon=${lon}&appid=${import.meta.env.VITE_WEATHER_API_KEY}`)
+                .then(response => setWeather(response?.data))
+                .catch(error => console.log(error))
+        } else {
+            setWeather(null)
+        }
+    }, [searchResult])
 
     const showSelectedCountry = (selectedCountry) => {
         setSearchResult([selectedCountry])
@@ -58,7 +71,7 @@ function App() {
                 />
             )}
             {searchResult && searchResult.length === 1 && (
-                <SingleCountry country={searchResult[0]} />
+                <SingleCountry country={searchResult[0]} weather={weather} />
             )}
         </div>
     )
