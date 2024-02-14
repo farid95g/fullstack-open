@@ -20,61 +20,41 @@ const App = () => {
 
     const addNewPerson = (event) => {
         event.preventDefault()
-        const foundPerson = persons.find(
-            (person) => person.name.toLowerCase() === newName.toLowerCase()
-        )
 
-        if (foundPerson) {
-            const updatePerson = confirm(
-                `${foundPerson.name} is already added to phonebook, replace the old number with a new one?`
-            )
-
-            if (!updatePerson) return
-
-            personService
-                .update(foundPerson.id, {
-                    ...foundPerson,
-                    number: newNumber
-                })
-                .then((updatedUser) => {
-                    setPersons(
-                        persons.map((person) =>
-                            person.id !== updatedUser.id ? person : updatedUser
-                        )
-                    )
-                    setNotification({
-                        message: `Update number of user ${updatedUser.name}`,
-                        status: 'success'
-                    })
-                    setTimeout(() => {
-                        setNotification(null)
-                    }, 5000)
-                }).catch(() => {
-                    setNotification({
-                        message: `Information of ${foundPerson.name} has already been removed from server`,
-                        status: 'error'
-                    })
-                    setTimeout(() => {
-                        setNotification(null)
-                    }, 5000)
-                })
-        } else {
-            const newPerson = {
-                name: newName,
-                number: newNumber
-            }
-
-            personService.create(newPerson).then((newPerson) => {
-                setPersons(persons.concat(newPerson))
-                setNotification({
-                    message: `Added ${newPerson.name}`,
-                    status: 'success'
-                })
-                setTimeout(() => {
-                    setNotification(null)
-                }, 5000)
-            })
+        const newPerson = {
+            name: newName,
+            number: newNumber
         }
+
+        personService.create(newPerson).then((newPerson) => {
+            setPersons(persons.concat(newPerson))
+            setNotification({
+                message: `Added ${newPerson.name}`,
+                status: 'success'
+            })
+            setTimeout(() => {
+                setNotification(null)
+            }, 5000)
+        }).catch(error => {
+            if (error.response.status === 422) {
+                return personService
+                    .update(error.response.data.id, newPerson)
+                    .then(updatedPerson => {
+                        setPersons(persons.map(p => {
+                            if (p.id === updatedPerson.id) return updatedPerson
+                            return p
+                        }))
+                    })
+                    .catch(() => {
+                        setNotification({
+                            message: `Failed to update user ${newPerson.name}`,
+                            status: 'error'
+                        })
+                    })
+            }
+            
+            console.log(error)
+        })
 
         setNewName('')
         setNewNumber('')
