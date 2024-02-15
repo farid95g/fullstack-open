@@ -32,6 +32,8 @@ const App = () => {
                 message: `Added ${newPerson.name}`,
                 status: 'success'
             })
+            setNewName('')
+            setNewNumber('')
             setTimeout(() => {
                 setNotification(null)
             }, 5000)
@@ -53,11 +55,11 @@ const App = () => {
                     })
             }
             
-            console.log(error)
+            setNotification({
+                message: error.response.data.message,
+                status: 'error'
+            })
         })
-
-        setNewName('')
-        setNewNumber('')
     }
 
     const filteredPersons = persons.filter((person) =>
