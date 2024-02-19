@@ -1,0 +1,13 @@
+GET http://localhost:5000/api/blogs
+
+###
+
+POST http://localhost:5000/api/blogs
+Content-Type: application/json
+
+{
+    "title": "1st blog",
+    "author": "Farid Guluzade",
+    "url": "https://google.com",
+    "likes": 30
+}
