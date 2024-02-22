@@ -24,8 +24,8 @@ module.exports = {
   'parserOptions': {
     'ecmaVersion': 'latest'
   },
-  '@stylistic/js/rules': {
-    'indent': [
+  'rules': {
+    '@stylistic/js/indent': [
       'error',
       2
     ],
