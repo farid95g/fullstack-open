@@ -11,3 +11,16 @@ Content-Type: application/json
     "url": "https://google.com",
     "likes": 30
 }
+
+###
+
+DELETE http://localhost:5000/api/blogs/invalidMongoDbId
+
+###
+
+PUT http://localhost:5000/api/blogs/65d36f0bed2c1f9dbb9fac50
+Content-Type: application/json
+
+{
+    "likes": 13
+}

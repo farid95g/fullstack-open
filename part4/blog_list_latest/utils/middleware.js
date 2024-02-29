@@ -1,5 +1,9 @@
 const errorHandler = (error, request, response, next) => {
-  if (error.name === 'ValidationError') {
+  const catchErrorNames = [
+    'ValidationError', 'CastError'
+  ]
+
+  if (catchErrorNames.includes(error.name)) {
     return response.status(400).json({ message: error.message })
   }
 
