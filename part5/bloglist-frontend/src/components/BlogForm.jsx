@@ -26,6 +26,7 @@ export const BlogForm = ({ handleCreateNewBlog }) => {
         <input
           type='text'
           value={title}
+          placeholder='Enter a title'
           onChange={({ target }) => setTitle(target.value)}
         />
       </div>
@@ -34,6 +35,7 @@ export const BlogForm = ({ handleCreateNewBlog }) => {
         <input
           type='text'
           value={author}
+          placeholder='Enter an author'
           onChange={({ target }) => setAuthor(target.value)}
         />
       </div>
@@ -42,6 +44,7 @@ export const BlogForm = ({ handleCreateNewBlog }) => {
         <input
           type='url'
           value={url}
+          placeholder='Enter an url'
           onChange={({ target }) => setUrl(target.value)}
         />
       </div>
