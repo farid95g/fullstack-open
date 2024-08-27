@@ -5,7 +5,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkb
 
 POST http://localhost:5000/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaWQiOiI2NjFkNWIwOTdiZjRkNWJjODQxMzJhYTUiLCJpYXQiOjE3MjEyMzkzNTYsImV4cCI6MTcyMTI0Mjk1Nn0.AONzwBgjdwdlFnHbnvqwi-xRvOUC4q7HkeIhVr1l2fY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlkIiwiaWQiOiI2NmI2MjM5MjhjMWQ2ZTE3OWQ3YjZmMDkiLCJpYXQiOjE3MjMyMjc1NjgsImV4cCI6MTcyMzIzMTE2OH0.YH2g1059djSXXSk7vyXdCx9WMSObstlcIm0JY0zGeoo
 
 {
     "title": "first test blog with user",

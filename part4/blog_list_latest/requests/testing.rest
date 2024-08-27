@@ -1,0 +1,2 @@
+POST http://localhost:5000/api/testing/reset
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZhcmlkIiwiaWQiOiI2NmI1YzA2Y2Q1NGRkN2MxYTM4ZmQwNTYiLCJpYXQiOjE3MjMyMTI1ODcsImV4cCI6MTcyMzIxNjE4N30.gRcIWsLD7EsIV0-q57FUjnhuRw7pVQ-BoVGmXOHZn7s

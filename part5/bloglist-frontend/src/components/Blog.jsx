@@ -24,17 +24,17 @@ const Blog = ({ blog, updateBlog, user, removeBlog }) => {
   }
 
   return (
-    <div>
+    <div className='blog'>
       <div>
         <span className='title'>{blog.title}</span>
         <button onClick={() => setShowFullInfo(!showFullInfo)}>
           {showFullInfo ? 'hide' : 'view'}
         </button>
       </div>
-      <div data-testid='hiddenContent' style={{ display: showFullInfo ? '' : 'none' }}>
+      <div data-testid='hiddenContent' style={{ display: showFullInfo ? '' : 'none' }} data-username={user.username} data-blog-author={blog.user.username}>
         {blog.url}
         <br />
-				likes {blog.likes}
+				likes <span data-testid='likes'>{blog.likes}</span>
         <button onClick={() => handleUpdate(blog)}>like</button>
         <br />
         <span>{blog.author}</span>

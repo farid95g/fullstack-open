@@ -83,12 +83,13 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
+    <form onSubmit={handleLogin} data-testid='loginForm'>
       <h2>Login to application</h2>
       <div>
 				username
         <input
           type='text'
+          data-testid='username'
           value={username}
           onChange={({ target }) => setUsername(target.value)}
         />
@@ -97,6 +98,7 @@ const App = () => {
 				password
         <input
           type='password'
+          data-testid='password'
           value={password}
           onChange={({ target }) => setPassword(target.value)}
         />
@@ -146,6 +148,7 @@ const App = () => {
             padding: '1rem',
             borderRadius: 5
           }}
+          className='notification'
         >
           {notification.message}
         </div>
